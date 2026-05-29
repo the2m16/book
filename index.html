@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book60</title>
+    <style>
+        :root { --primary: #1a1a1a; --accent: #d4a373; --bg: #fafafa; }
+        body { font-family: sans-serif; background: var(--bg); margin: 0; }
+        header { background: var(--primary); color: white; padding: 2rem; text-align: center; }
+        .main-nav { display: grid; grid-template-columns: repeat(4, 1fr); background: #eee; }
+        .nav-btn { padding: 15px; border: none; cursor: pointer; font-weight: bold; }
+        .nav-btn.active { background: var(--accent); color: white; }
+        .sub-nav { display: none; background: #ddd; padding: 10px; text-align: center; gap: 10px; }
+        .sub-nav.show { display: flex; justify-content: center; flex-wrap: wrap; }
+        .sub-btn { background: white; border: 1px solid #ccc; padding: 5px 15px; border-radius: 15px; cursor: pointer; }
+        .content { max-width: 800px; margin: 2rem auto; background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); min-height: 300px; }
+        @media (max-width: 600px) { .main-nav { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<header><h1>НОМ</h1></header>
+
+<nav class="main-nav" id="mainNav"></nav>
+<div class="sub-nav" id="subNav"></div>
+
+<main class="content" id="appContent">
+    <h2>Тавтай морил</h2>
+    <p>Мэдээлэл үзэхийн тулд цэснээс сонгоно уу.</p>
+</main>
+
+<script>
+    // 1. МЭДЭЭЛЛИЙН САН (ЭНДЭЭС ТЕКСТЭЭ ЗАСАХ БОЛОМЖТОЙ)
+    const bookData = {
+        "page1": {
+            "label": "НҮҮР ХУУДАС",
+            "title": "Үндсэн танилцуулга",
+            "subPages": {
+                "Дэд1а": { "title": "Дэд хуудас 1а", "text": "Энэ бол 1а-ийн мэдээлэл." },
+                "Дэд1б": { "title": "Дэд хуудас 1б", "text": "Энэ бол 1б-ийн мэдээлэл." },
+                "Дэд1в": { "title": "Дэд хуудас 1в", "text": "Энэ бол 1в-ийн мэдээлэл." },
+                "Дэд1г": { "title": "Дэд хуудас 1г", "text": "Энэ бол 1г-ийн мэдээлэл." }
+            }
+        },
+        "page2": { "label": "ЗОХИОЛЧИЙН ТУХАЙ", "title": "Зохиолчийн тухай", "text": "Зохиолчийн намтар энд байна." },
+        "page3": { "label": "ЗАХИАЛАХ", "title": "Үнэ ба Захиалга", "text": "Одоогийн үнэ: 25,000 төгрөг." },
+        "page4": { "label": "ХОЛБОО БАРИХ", "title": "Холбоо барих", "text": "Утас: 9911-XXXX" }
+    };
+
+    // 2. ЦЭСҮҮДИЙГ АВТОМАТААР ҮҮСГЭХ
+    const mainNav = document.getElementById('mainNav');
+    const subNav = document.getElementById('subNav');
+    const appContent = document.getElementById('appContent');
+
+    Object.keys(bookData).forEach(key => {
+        const btn = document.createElement('button');
+        btn.className = 'nav-btn';
+        btn.innerText = bookData[key].label;
+        btn.onclick = () => loadMainPage(key, btn);
+        mainNav.appendChild(btn);
+    });
+
+    function loadMainPage(key, btn) {
+        // Идэвхтэй товчийг тэмдэглэх
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const data = bookData[key];
+        
+        // Дэд цэс байгаа эсэхийг шалгах
+        subNav.innerHTML = '';
+        if (data.subPages) {
+            subNav.classList.add('show');
+            Object.keys(data.subPages).forEach(subKey => {
+                const sBtn = document.createElement('button');
+                sBtn.className = 'sub-btn';
+                sBtn.innerText = subKey;
+                sBtn.onclick = () => {
+                    renderContent(data.subPages[subKey].title, data.subPages[subKey].text);
+                };
+                subNav.appendChild(sBtn);
+            });
+        } else {
+            subNav.classList.remove('show');
+        }
+
+        renderContent(data.title, data.text || "Дэд цэснээс сонголт хийнэ үү.");
+    }
+
+    function renderContent(title, text) {
+        appContent.innerHTML = `<h2>${title}</h2><p>${text}</p>`;
+    }
+</script>
+
+</body>
+</html>
